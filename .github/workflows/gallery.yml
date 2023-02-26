@@ -6,9 +6,6 @@ on:
   pull_request:
     branches:
       - master
-permissions:
-  contents: write
-
 jobs:
   test:
     name: Publish Gallery to Github Pages
@@ -16,13 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2.3.1
         with:
           persist-credentials: false
       - name: Build Gallery 🔧
         run: docker run -v "$(pwd):/work" thumbsupgallery/thumbsup /bin/sh -c "cd /work/ && thumbsup --config config.json"
       - name: Deploy to Github Pages 🚀
-        uses: actions/deploy-pages@v1
+        uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
-          artifact_name: gh-pages
-          token: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            BRANCH: gh-pages
+            FOLDER: build_output
+            CLEAN: true
